@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miamicreme/Empire-Voice-Module/contracts/sync-event.schema.json",
+  "title": "Empire Voice Sync Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "event_type",
+    "source_device_id",
+    "status",
+    "payload",
+    "sensitivity",
+    "created_at"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "minLength": 1 },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "voice_intent",
+        "empireos_command",
+        "tool_call_request",
+        "permission_request",
+        "permission_decision",
+        "assistant_result",
+        "memory_event",
+        "heartbeat",
+        "device_status",
+        "offline_capture"
+      ]
+    },
+    "source_device_id": { "type": "string", "minLength": 1 },
+    "target_device_id": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "queued_offline", "claimed", "permission_required", "completed", "failed", "blocked"]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": ["ephemeral", "private_memory", "public_safe", "secret"]
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "attempt": { "type": "integer", "minimum": 0, "default": 0 },
+    "error": { "type": "string" }
+  }
+}
