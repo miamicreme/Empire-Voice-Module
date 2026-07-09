@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miamicreme/Empire-Voice-Module/contracts/device-session.schema.json",
+  "title": "Empire Voice Device Session",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "device_id",
+    "user_id",
+    "device_type",
+    "status",
+    "capabilities",
+    "last_seen_at"
+  ],
+  "properties": {
+    "device_id": { "type": "string", "minLength": 1 },
+    "user_id": { "type": "string", "minLength": 1 },
+    "device_type": {
+      "type": "string",
+      "enum": ["mobile", "desktop", "worker"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["online", "offline", "degraded"]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "voice_capture",
+          "dictation",
+          "local_stt",
+          "local_tts",
+          "screen_context",
+          "browser_control",
+          "local_files",
+          "local_models",
+          "mcp_tools",
+          "fallback_worker",
+          "mobile_safe_actions"
+        ]
+      }
+    },
+    "last_seen_at": { "type": "string", "format": "date-time" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  }
+}
