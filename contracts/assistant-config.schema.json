@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miamicreme/Empire-Voice-Module/contracts/assistant-config.schema.json",
+  "title": "Empire Voice Assistant Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "config_version",
+    "assistant_name",
+    "wake_phrase",
+    "follow_up_window_seconds",
+    "local_first",
+    "privacy",
+    "audio",
+    "speech_recognition",
+    "voice_output",
+    "dictation",
+    "modules",
+    "permissions"
+  ],
+  "properties": {
+    "config_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "assistant_name": { "type": "string", "minLength": 1 },
+    "wake_phrase": { "type": "string", "minLength": 1 },
+    "follow_up_window_seconds": { "type": "integer", "minimum": 0, "maximum": 60 },
+    "local_first": { "type": "boolean" },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_sensitivity", "memory_default", "log_retention", "redaction_enabled"],
+      "properties": {
+        "default_sensitivity": { "type": "string", "enum": ["ephemeral", "private_memory", "public_safe"] },
+        "memory_default": { "type": "string", "enum": ["never", "ask", "private_only"] },
+        "log_retention": { "type": "string", "enum": ["session", "7d", "30d", "90d"] },
+        "redaction_enabled": { "type": "boolean" }
+      }
+    },
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_device", "output_device", "noise_gate_enabled"],
+      "properties": {
+        "input_device": { "type": "string" },
+        "output_device": { "type": "string" },
+        "noise_gate_enabled": { "type": "boolean" }
+      }
+    },
+    "speech_recognition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend", "model", "language"],
+      "properties": {
+        "backend": { "type": "string", "enum": ["faster_whisper", "mlx_whisper", "mock"] },
+        "model": { "type": "string" },
+        "language": { "type": "string" }
+      }
+    },
+    "voice_output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "backend", "voice"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "backend": { "type": "string", "enum": ["piper", "system", "mock", "none"] },
+        "voice": { "type": "string" }
+      }
+    },
+    "dictation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "hotkey"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "hotkey": { "type": "string" }
+      }
+    },
+    "modules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["empireos", "skillforge", "dealflow", "globalintel", "signalbrief", "framebrief"],
+      "properties": {
+        "empireos": { "type": "boolean" },
+        "skillforge": { "type": "boolean" },
+        "dealflow": { "type": "boolean" },
+        "globalintel": { "type": "boolean" },
+        "signalbrief": { "type": "boolean" },
+        "framebrief": { "type": "boolean" }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["medium_risk", "high_risk", "blocked_actions"],
+      "properties": {
+        "medium_risk": { "type": "string", "enum": ["ask", "allow", "block"] },
+        "high_risk": { "type": "string", "enum": ["ask", "block"] },
+        "blocked_actions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
