@@ -45,6 +45,9 @@ Empire Voice should be a private voice interface and orchestration layer, not a 
 | Redaction | Strip sensitive data before storage or logging |
 | Tool Router | Choose the right tool or module without context bloat |
 | MCP Gateway | Connect to external tools through MCP boundaries |
+| Permission Gate | Require confirmation before risky actions |
+| Setup Wizard | Configure assistant, audio, privacy, modules, tools, and test command path |
+| Runtime State Machine | Keep behavior predictable, interruptible, and testable |
 | EmpireOS Handoff | Convert voice intent into missions, priorities, and AI-team tasks |
 | SkillForge Handoff | Convert voice intent into specs, plans, audits, recipes, and artifacts |
 | DealFlow Handoff | Convert voice intent into deal actions, buyer follow-ups, and risk checks |
@@ -63,6 +66,8 @@ Voice input
   -> intent event
   -> redaction
   -> router
+  -> permission gate
+  -> assistant state machine
   -> module handoff
   -> EmpireOS / SkillForge / DealFlow / GlobalIntel action
 ```
@@ -71,14 +76,67 @@ Empire Voice should produce structured events. EmpireOS should decide what they 
 
 ---
 
+## Full Assistant Behavior
+
+Empire Voice now has a documented runtime behavior model:
+
+- predictable assistant modes,
+- wake/follow-up behavior,
+- interruptibility,
+- permission-required actions,
+- memory rules,
+- error recovery,
+- done criteria.
+
+See [`docs/assistant-behavior.md`](docs/assistant-behavior.md) and [`docs/state-machine.md`](docs/state-machine.md).
+
+The first runtime implementation is `EmpireVoiceAssistant`, which accepts a transcript and returns a structured turn result with:
+
+- status,
+- message,
+- voice intent,
+- EmpireOS command,
+- optional tool call,
+- optional permission result,
+- state transitions.
+
+---
+
+## Setup Wizard
+
+Empire Voice now has a UI-agnostic setup wizard engine. A future CLI, PyQt app, Tauri shell, or web onboarding screen can render the same setup session.
+
+Wizard steps:
+
+1. Welcome
+2. System Check
+3. Audio Input
+4. Speech Recognition
+5. Wake Behavior
+6. Voice Output
+7. Dictation
+8. Privacy
+9. Modules
+10. MCP Tools
+11. Test Command
+12. Finish
+
+See [`docs/setup-wizard.md`](docs/setup-wizard.md), [`docs/configuration.md`](docs/configuration.md), [`contracts/assistant-config.schema.json`](contracts/assistant-config.schema.json), and [`contracts/setup-wizard.schema.json`](contracts/setup-wizard.schema.json).
+
+---
+
 ## Repository Structure
 
 ```text
 docs/
   architecture.md
+  assistant-behavior.md
+  configuration.md
   jarvis-research-notes.md
   module-map.md
   privacy-and-memory.md
+  setup-wizard.md
+  state-machine.md
   voice-pipeline.md
   mcp-tool-router.md
   empireos-integration.md
@@ -89,16 +147,24 @@ contracts/
   empireos-command.schema.json
   memory-event.schema.json
   tool-call.schema.json
+  assistant-config.schema.json
+  setup-wizard.schema.json
 
 src/empire_voice/
   __init__.py
+  assistant.py
+  config.py
   contracts.py
+  events.py
+  permissions.py
   redaction.py
   router.py
-  events.py
+  setup_wizard.py
+  state.py
 
 tests/
   test_empire_voice_contracts.py
+  test_assistant_behavior.py
 ```
 
 ---
@@ -112,6 +178,8 @@ tests/
 5. **Tool-safe** — MCP and browser control must be permissioned and auditable.
 6. **Memory-aware** — save decisions and durable preferences, not random noise.
 7. **Action-oriented** — every serious command should end in a next action, artifact, task, or decision.
+8. **Setup-driven** — normal users should configure the assistant through a wizard, not hand-edit JSON.
+9. **State-machine driven** — runtime behavior should be deterministic and testable.
 
 ---
 
@@ -123,12 +191,18 @@ tests/
 | [`contracts/empireos-command.schema.json`](contracts/empireos-command.schema.json) | Intent converted into a private EmpireOS mission or command |
 | [`contracts/memory-event.schema.json`](contracts/memory-event.schema.json) | Durable memory event with redaction and sensitivity controls |
 | [`contracts/tool-call.schema.json`](contracts/tool-call.schema.json) | Safe routed tool request boundary |
+| [`contracts/assistant-config.schema.json`](contracts/assistant-config.schema.json) | Validated assistant configuration |
+| [`contracts/setup-wizard.schema.json`](contracts/setup-wizard.schema.json) | Setup wizard session state |
 
 ---
 
 ## Key Docs
 
 - [`docs/architecture.md`](docs/architecture.md)
+- [`docs/assistant-behavior.md`](docs/assistant-behavior.md)
+- [`docs/setup-wizard.md`](docs/setup-wizard.md)
+- [`docs/state-machine.md`](docs/state-machine.md)
+- [`docs/configuration.md`](docs/configuration.md)
 - [`docs/voice-pipeline.md`](docs/voice-pipeline.md)
 - [`docs/mcp-tool-router.md`](docs/mcp-tool-router.md)
 - [`docs/privacy-and-memory.md`](docs/privacy-and-memory.md)
@@ -182,17 +256,35 @@ Output: local text, no memory save unless explicitly requested.
 
 ---
 
+## First Working Slice
+
+```python
+from empire_voice import EmpireVoiceAssistant
+
+assistant = EmpireVoiceAssistant()
+result = assistant.handle_transcript("Empire, audit this repo with SkillForge")
+print(result.status)
+print(result.intent)
+print(result.empireos_command)
+```
+
+---
+
 ## Development Status
 
-This branch defines the module plan, contracts, and first code skeleton. The next implementation steps are:
+This branch now defines the module plan, contracts, setup wizard, state machine, permission gate, and first assistant runtime skeleton.
 
-1. Build contract validators.
-2. Build redaction and sensitivity classification.
-3. Build intent event creation from transcript text.
-4. Build router decisions for EmpireOS, SkillForge, DealFlow, GlobalIntel, SignalBrief, and FrameBrief.
-5. Add local memory event persistence.
-6. Add MCP permission gates.
-7. Add evals for voice-to-action reliability.
+Next implementation steps:
+
+1. Add contract validators against JSON schemas.
+2. Add CLI setup wizard wrapper.
+3. Add local config load/save with migration support.
+4. Add microphone/STT adapter interface.
+5. Add TTS adapter interface.
+6. Add local memory store.
+7. Add MCP server registry and permission UI.
+8. Add evals for voice-to-action reliability.
+9. Add desktop tray/setup UI.
 
 ---
 
