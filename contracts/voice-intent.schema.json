@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miamicreme/Empire-Voice-Module/contracts/voice-intent.schema.json",
+  "title": "Empire Voice Intent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "intent_id",
+    "transcript",
+    "normalized_intent",
+    "directness",
+    "target_module",
+    "action",
+    "confidence",
+    "sensitivity",
+    "redaction_status",
+    "next_action"
+  ],
+  "properties": {
+    "intent_id": { "type": "string", "minLength": 1 },
+    "transcript": { "type": "string", "minLength": 1 },
+    "normalized_intent": { "type": "string", "minLength": 1 },
+    "directness": {
+      "type": "string",
+      "enum": ["ignored", "directed", "follow_up", "dictation", "system_control"]
+    },
+    "target_module": {
+      "type": "string",
+      "enum": ["empireos", "skillforge", "dealflow", "globalintel", "signalbrief", "framebrief", "mcp", "dictation", "system"]
+    },
+    "action": { "type": "string", "minLength": 1 },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "sensitivity": {
+      "type": "string",
+      "enum": ["ephemeral", "private_memory", "public_safe", "secret"]
+    },
+    "redaction_status": {
+      "type": "string",
+      "enum": ["not_needed", "redacted", "blocked"]
+    },
+    "entities": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "missing_information": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "next_action": { "type": "string", "minLength": 1 }
+  }
+}
