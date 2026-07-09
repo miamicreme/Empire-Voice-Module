@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miamicreme/Empire-Voice-Module/contracts/command-queue.schema.json",
+  "title": "Empire Voice Command Queue Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "command_id",
+    "source_event_id",
+    "target_module",
+    "preferred_executor",
+    "fallback_policy",
+    "claim_status",
+    "created_at"
+  ],
+  "properties": {
+    "command_id": { "type": "string", "minLength": 1 },
+    "source_event_id": { "type": "string", "minLength": 1 },
+    "target_module": {
+      "type": "string",
+      "enum": ["empireos", "skillforge", "dealflow", "globalintel", "signalbrief", "framebrief", "mcp", "dictation", "system"]
+    },
+    "preferred_executor": {
+      "type": "string",
+      "enum": ["mobile", "desktop", "worker"]
+    },
+    "fallback_policy": {
+      "type": "string",
+      "enum": ["mobile_safe", "worker_allowed", "desktop_required", "queue_only", "blocked"]
+    },
+    "claim_status": {
+      "type": "string",
+      "enum": ["unclaimed", "claimed", "completed", "failed", "blocked"]
+    },
+    "claimed_by_device_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  }
+}
