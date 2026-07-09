@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miamicreme/Empire-Voice-Module/contracts/setup-wizard.schema.json",
+  "title": "Empire Voice Setup Wizard Session",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["session_id", "current_step", "completed_steps", "status", "config_draft", "validation_errors"],
+  "properties": {
+    "session_id": { "type": "string", "minLength": 1 },
+    "current_step": {
+      "type": "string",
+      "enum": [
+        "welcome",
+        "system_check",
+        "audio_input",
+        "speech_recognition",
+        "wake_behavior",
+        "voice_output",
+        "dictation",
+        "privacy",
+        "modules",
+        "mcp_tools",
+        "test_command",
+        "finish"
+      ]
+    },
+    "completed_steps": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["not_started", "in_progress", "blocked", "complete"]
+    },
+    "config_draft": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "validation_errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
