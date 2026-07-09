@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miamicreme/Empire-Voice-Module/contracts/tool-call.schema.json",
+  "title": "Empire Voice Tool Call Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tool_call_id",
+    "source_voice_intent_id",
+    "target",
+    "tool_name",
+    "purpose",
+    "arguments",
+    "permission_required",
+    "risk_level",
+    "sensitivity"
+  ],
+  "properties": {
+    "tool_call_id": { "type": "string", "minLength": 1 },
+    "source_voice_intent_id": { "type": "string", "minLength": 1 },
+    "target": {
+      "type": "string",
+      "enum": ["mcp", "skillforge", "empireos", "dealflow", "globalintel", "signalbrief", "framebrief", "dictation", "system"]
+    },
+    "tool_name": { "type": "string", "minLength": 1 },
+    "purpose": { "type": "string", "minLength": 1 },
+    "arguments": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "permission_required": { "type": "boolean" },
+    "permission_reason": { "type": "string" },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "blocked"]
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": ["ephemeral", "private_memory", "public_safe", "secret"]
+    }
+  }
+}
